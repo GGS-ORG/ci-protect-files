@@ -57,11 +57,25 @@ function github_status($url, $state = 'success', $descr = 'Only the .md files we
 
 $post_data = file_get_contents('php://input');
 $data = json_decode($post_data, true);
-print "<pre>";
-print_r($data);
+
+if (!isset($data['pull_request'])) {
+    print('No PR information is found.');
+    print_r($data);
+}
+
+if (!isset($data['pull_request']['statuses_url'])) {
+    print('No statuses_url information is found.');
+    print_r($data);
+}
+
+//print "<pre>";
+//print_r($data);
 
 
-$url = 'https://api.github.com/repos/GGS-ORG/artifact/statuses/4757d5d99cf05605f2232d4246bc47ac738e1081';
+//$url = 'https://api.github.com/repos/GGS-ORG/artifact/statuses/4757d5d99cf05605f2232d4246bc47ac738e1081';
+$url = $data['pull_request']['statuses_url'];
+
+print "statuses_url ($statuses_url)";
 
 github_status($url, 'pending', 'Examining the list of updated files...');
 sleep(5);
