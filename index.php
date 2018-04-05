@@ -55,6 +55,12 @@ function github_status($url, $state = 'success', $descr = 'Only the .md files we
     print_r($response);
 }
 
+$post_data = file_get_contents('php://input');
+$data = json_decode($post_data, true);
+print "<pre>";
+print_r($data);
+
+
 $url = 'https://api.github.com/repos/GGS-ORG/artifact/statuses/4757d5d99cf05605f2232d4246bc47ac738e1081';
 
 github_status($url, 'pending', 'Examining the list of updated files...');
