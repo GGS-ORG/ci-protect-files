@@ -87,7 +87,7 @@ if ( !isset($pr['commits_url']) ) {
 }
 
 $files_url = $pr['commits_url'];
-$files_url = preg_replace('/commits$', '/files', $files_url);
+$files_url = preg_replace('~/commits$~', '/files', $files_url);
 $files = get_files($files_url);
 print_r($files);
 
