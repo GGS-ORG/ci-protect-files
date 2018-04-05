@@ -58,7 +58,7 @@ function github_status($url, $state = 'success', $descr = 'Only the .md files we
 
 function get_files($url)
 {
-    print "Getting Files ($url)\n";
+    print "Getting files updated in PR ($url)\n";
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_USERAGENT, USER_AGENT);
@@ -67,16 +67,20 @@ function get_files($url)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_ENCODING, "gzip");
 
-
     if (false === ($json = curl_exec($ch))) {
         print "ERROR\n";
         print curl_error($ch) . "\n\n";
         return [];
     }
-    print "GOT \n$json\n\n\n";
 
     $files = json_decode($json, true);
-    return $files;
+    $return = [];
+
+    foreach ($files as $file) {
+        $return[] = $file['filename'];
+    }
+
+    return $return;
 }
 
 
@@ -102,14 +106,18 @@ if ( !isset($pr['commits_url']) ) {
 
 $files_url = $pr['commits_url'];
 $files_url = preg_replace('~/commits$~', '/files', $files_url);
+$pr_status_url = $pr['statuses_url'];
+
+// Now we can init PR status and start doing validation
+github_status($pr_status_url, 'pending', 'Examining the list of updated files...');
+
 $files = get_files($files_url);
-print_r($files);
 
-$url = $pr['statuses_url'];
+foreach ($files as $file_name) {
+    if (!preg_match('~\.md$~', $file_name)) {
+        github_status($pr_status_url, 'failure', 'Please only update .md files.');
+        exit(0);
+    }
+}
 
-
-print "statuses_url ($url)\n";
-
-github_status($url, 'pending', 'Examining the list of updated files...');
-sleep(5);
-github_status($url);
+github_status($pr_status_url);
