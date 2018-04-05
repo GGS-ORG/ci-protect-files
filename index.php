@@ -58,7 +58,11 @@ function github_status($url, $state = 'success', $descr = 'Only the .md files we
 function get_files($url)
 {
     print "Getting Files ($url)\n";
-    $json = file_get_contents($url);
+    if (false === ($json = file_get_contents ($url))) {
+        print "ERROR\n";
+        print error_get_last() . "\n\n";
+        return [];
+    }
     print "GOT \n$json\n\n\n";
 
     $files = json_decode($json, true);
