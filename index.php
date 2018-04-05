@@ -55,27 +55,43 @@ function github_status($url, $state = 'success', $descr = 'Only the .md files we
     print_r($response);
 }
 
+function get_files($url)
+{
+    $json = file_get_contents($url);
+    $files = json_decode($json, true);
+    return $files;
+}
+
+
 $post_data = file_get_contents('php://input');
 $data = json_decode($post_data, true);
 
-if (!isset($data['pull_request'])) {
+if ( !isset($data['pull_request']) ) {
     print('No PR information is found.');
     print_r($data);
 }
 
-if (!isset($data['pull_request']['statuses_url'])) {
+$pr = $data['pull_request'];
+
+if ( !isset($pr['statuses_url']) ) {
     print('No statuses_url information is found.');
     print_r($data);
 }
 
-//print "<pre>";
-//print_r($data);
+if ( !isset($pr['commits_url']) ) {
+    print('No commits_url information is found.');
+    print_r($data);
+}
+
+$files_url = $pr['commits_url'];
+$files_url = preg_replace('/commits$', '/files', $files_url);
+$files = get_files($files_url);
+print_r($files);
+
+$url = $pr['statuses_url'];
 
 
-//$url = 'https://api.github.com/repos/GGS-ORG/artifact/statuses/4757d5d99cf05605f2232d4246bc47ac738e1081';
-$url = $data['pull_request']['statuses_url'];
-
-print "statuses_url ($statuses_url)";
+print "statuses_url ($url)\n";
 
 github_status($url, 'pending', 'Examining the list of updated files...');
 sleep(5);
