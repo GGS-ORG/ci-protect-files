@@ -58,9 +58,17 @@ function github_status($url, $state = 'success', $descr = 'Only the .md files we
 function get_files($url)
 {
     print "Getting Files ($url)\n";
-    if (false === ($json = file_get_contents ($url))) {
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_ENCODING, "gzip");
+
+
+    if (false === ($json = curl_exec($ch))) {
         print "ERROR\n";
-        print error_get_last() . "\n\n";
+        print curl_error($ch) . "\n\n";
         return [];
     }
     print "GOT \n$json\n\n\n";
