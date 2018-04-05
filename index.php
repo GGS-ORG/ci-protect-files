@@ -115,7 +115,7 @@ $files = get_files($files_url);
 
 foreach ($files as $file_name) {
     if (!preg_match('~\.md$~', $file_name)) {
-        github_status($pr_status_url, 'failure', 'Please only update .md files.');
+        github_status($pr_status_url, 'failure', 'Protected files were modified. Please wait for maintainer.');
         exit(0);
     }
 }
