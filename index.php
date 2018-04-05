@@ -1,6 +1,7 @@
 <?php
 
 define('CONTEXT', 'continuous-integration/protect-files');
+define('USER_AGENT', 'GGS_WIKI');
 
 function github_request($url, $post = [])
 {
@@ -15,7 +16,7 @@ function github_request($url, $post = [])
 
     curl_setopt($ch, CURLOPT_URL, $url);
     //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/xml'));
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Agent smith');
+    curl_setopt($ch, CURLOPT_USERAGENT, USER_AGENT);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_USERPWD, $access);
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
@@ -60,6 +61,7 @@ function get_files($url)
     print "Getting Files ($url)\n";
 
     $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_USERAGENT, USER_AGENT);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
